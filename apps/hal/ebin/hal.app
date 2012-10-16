@@ -5,4 +5,4 @@
               {applications,[kernel,stdlib,sasl,inets,crypto,snmp]},
               {mod,{hal_app,[]}},
               {env,[]},
-              {modules,[hal,hal_app,hal_sup]}]}.
+              {modules,[hal,hal_app,hal_sup,mochijson2,mochinum]}]}.
