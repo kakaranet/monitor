@@ -17,23 +17,15 @@ home(SessionId, Env, _Input) ->
 home([{http_host, Host} | _Env]) ->
     "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"http://"++Host++"/hal.css\" />"++
     "<script type=\"text/javascript\" src=\"http://"++ Host++"/jquery.js\"></script>"++
-    "<script>function comet(el){$.ajax({ type: 'Get', url: 'http://"++Host++"/monitor/hal:snmp?id=' + $(el).attr('id'), async: true, cache: false, dataType: \"json\","++
-    "success : function(jsonData){ for (id in jsonData) { if(jsonData.hasOwnProperty(id)){ $(el).removeClass(function(){$(this).attr('class')}); $(el).addClass(id);} }"++ 
-    "var ctx = $(el)[0].getContext(\"2d\");ctx.fillStyle=\"#a5AA22\";ctx.fillRect(0,0,200,200);ctx.font=\"bold 45px Ubuntu\";"++
-    "ctx.fillStyle=\"#FFFFFF\";ctx.fillText(\"DSK\",70,140); ctx.fillStyle=\"#FFFFFF\"; ctx.font=\"bold 13px Ubuntu\";"++
-    "ctx.fillText(\"№   Mount    Size, Kb    Use,%\", 10, 20);ctx.fillStyle=\"#FFFFFF\"; ctx.font=\"bold 11px Ubuntu\";"++
-    "$.each(jsonData.disks, function(i, disk){"++
-    "var y = i*13 + 35; ctx.fillText(i, 12, y); ctx.fillText(disk.mount, 33, y);ctx.fillText(disk.size, 88, y);ctx.fillText(disk.use, 152, y);});"++
-    "ctx.strokeStyle=\"#FFFFFF\";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(10,23);ctx.lineTo(23, 23);ctx.moveTo(34,23);ctx.lineTo(76, 23);ctx.moveTo(88,23);ctx.lineTo(139, 23);"++
-    "ctx.moveTo(151,23);ctx.lineTo(187, 23);ctx.closePath();ctx.stroke();"++
-    "ctx.fillStyle=\"#FFFFFF\";ctx.font=\"bold 15px Ubuntu\";ctx.fillText($(el).attr(\"id\"),10,155);"++
-    "setTimeout(function(){comet(el);el=null}, 1000)}," ++
-    "error: function(XMLHttpRequest, textStatus, error){ $(el).html(textStatus), setTimeout(function(){comet(el);el=null}, 5000);}});}" ++
+    "<script type=\"text/javascript\" src=\"http://"++ Host++"/hal.js\"></script>"++
+    "<script>function comet(el){$.ajax({ type: 'Get', url: 'http://"++Host++"/monitor/hal:snmp?id=' + $(el).attr('id') + '&cursor=' + $(el).attr('class'),"++ 
+    "async: true, cache: false, dataType: \"json\","++
+    "success : function(data){handleAgentData(el, data);}, error: function(XMLHttpRequest, textStatus, error){ handleError(el, textStatus);}});}" ++
     "$(function(){$.map($(\"canvas\"), function(el, i){comet(el)});});</script></head><body>"++
-    "<div id=\"content\"><ul>"
+    "<div id=\"content\"><ul>"++
     "<li><canvas id=\"app\" width=\"200\" height=\"200\" class=\"node\"></canvas></li>"++
     "<li><canvas id=\"game\" width=\"200\" height=\"200\" class=\"node\"></canvas></li>"++
-    "<li><canvas id=\"web\" width=\"200\" height=\"200\" class=\"node\">Hello web</canvas></li>"++
+    "<li><canvas id=\"web\" width=\"200\" height=\"200\" class=\"node\"></canvas></li>"++
     "<li><canvas id=\"rabbit\" width=\"200\" height=\"200\" class=\"node\"></canvas></li>"++
     "</ul></div></body></html>";
 home([{_, _} | Env]) ->
@@ -45,6 +37,9 @@ disk_info(Agent)->
 
 prepare_disk_json([{_, Mount},{_, Size},{_, Use}])->
     {struct, [{mount, iolist_to_binary(Mount)}, {size, Size}, {use, Use}]}.
+
+node_info(Agent) ->
+    [].
 
 % snmp
 get_row(_Prefix, [], _Agent, Acc)-> Acc;
@@ -76,6 +71,6 @@ validate_oids(_, _) -> [].
 
 agent_id([])-> ok;
 agent_id([{query_string, Str} | _])->
-    lists:nth(1, string:tokens(Str, "id= &_="));
+    lists:nth(1, string:tokens(Str, "id= &cursor= &_="));
 agent_id([{_,_}|Env])->
     agent_id(Env).
