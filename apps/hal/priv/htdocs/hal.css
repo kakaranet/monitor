@@ -1,4 +1,8 @@
-#content{display:table;border-collapse:collapse;margin: 0 auto;}
+#content {display:table;border-collapse:collapse;margin: 0 auto;}
 #content > ul {display:table-row;}
 #content > ul > li {display:table-cell;padding:5px;}
 #content > ul > li > div {border:1px solid black;width:200px;height:200px;}
+#content > ul > li > canvas {width:200px;height:200px;}
+
+.node {border:1px solid black;}
+.disks {border:1px solid black;}
