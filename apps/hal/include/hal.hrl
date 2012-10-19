@@ -1,0 +1,2 @@
+-define(diskTableRow, [?diskDescr, ?diskKBytes, ?diskCapacity]).
+-define(memTableRow, [?loadSystemTotalMemory64, ?loadSystemUsedMemory64]).

@@ -4,5 +4,6 @@
 #content > ul > li > canvas {width:200px;height:200px;}
 
 .node  {border:1px solid black;}
-.disks {border:1px solid green;}
+.disks {border:1px solid black;}
+.mem {border:1px solid black;}
 .error {border:1px solid red;}

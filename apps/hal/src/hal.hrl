@@ -11,30 +11,23 @@
 % ind1(0) | ind2 (1) | diskMount (2)| diskKBytes(3) | diskUse % (4)
 % =================================================================
 % entry № |     6    |     /host    |  963 876 860  |   24
-
--define(diskTableEntry, [1,3,6,1,4,1,193,19,3,2,2,2,2,1]).
--define(diskEntryNo, 1).
--define(diskMount, 	[1,3,6,1,4,1,193,19,3,2,2,2,2,1,2]).
--define(diskSize, 	[1,3,6,1,4,1,193,19,3,2,2,2,2,1,3]).
--define(diskUse, 	[1,3,6,1,4,1,193,19,3,2,2,2,2,1,4]).
--define(diskTableRow, [?diskMount, ?diskSize, ?diskUse]).
+-define(diskTableRow, [?diskDescr, ?diskKBytes, ?diskCapacity]).
 
 
 %% Os load snmp table
--define(loadTable, 				[1,3,6,1,4,1,193,19,3,2,2,1,3]).
--define(loadEntry, 				[1,3,6,1,4,1,193,19,3,2,2,1,3,1]).
--define(loadErlNodeName, 			1).
--define(loadSystemTotalMemory, 			2).
--define(loadSystemUsedMemory, 			3).
--define(loadLargestErlProcess, 			4).
--define(loadLargestErlProcessUsedMemory,	5).
--define(loadCpuLoad, 				6).
--define(loadCpuLoad5, 				7).
--define(loadCpuLoad15, 				8).
--define(loadOsWordsize, 			9).
--define(loadSystemTotalMemory64, 		10).
--define(loadSystemUsedMemory64, 		11).
--define(loadLargestErlProcessUsedMemory64, 	12).
+-define(loadTableEntry, 		[1,3,6,1,4,1,193,19,3,2,2,1,3,1]).
+%-define(loadErlNodeName, 			1).
+-define(largestErlProcess, 		[1,3,6,1,4,1,193,19,3,2,2,1,3,1,4]).
+-define(cpuLoad, 			[1,3,6,1,4,1,193,19,3,2,2,1,3,1,6]).
+-define(cpuLoad5, 			[1,3,6,1,4,1,193,19,3,2,2,1,3,1,7]).
+-define(cpuLoad15, 			[1,3,6,1,4,1,193,19,3,2,2,1,3,1,8]).
+-define(sysTotalMemory64, 		[1,3,6,1,4,1,193,19,3,2,2,1,3,1,10]).
+-define(sysUsedMemory64, 		[1,3,6,1,4,1,193,19,3,2,2,1,3,1,11]).
+-define(largestErlProcessUsedMemory64, 	[1,3,6,1,4,1,193,19,3,2,2,1,3,1,12]).
+-define(loadTableRow, [?sysTotalMemory64, ?sysUsedMemory64, ?largestErlProcess, ?largestErlProcessUsedMemory64, ?cpuLoad, ?cpuLoad5, ?cpuLoad15]).
+-define(memTableRow, [?sysTotalMemory64, ?sysUsedMemory64]).
+-define(cpuTableRow, [?cpuLoad, ?cpuLoad5, ?cpuLoad15]).
+-define(erlTableRow, [?largestErlProcess, ?largestErlProcessUsedMemory64])
 
 %% erlang node
 -define(erlNodeTable, [1,3,6,1,4,1,193,19,3,1,2,1,1]).
@@ -59,5 +52,3 @@
 -define(applName, 2).
 -define(applDescr, 3).
 -define(applVsn, 4).
-
-

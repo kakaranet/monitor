@@ -2,14 +2,12 @@
 -behaviour(snmpm_user).
 -include_lib("inets/include/httpd.hrl").
 -include_lib("snmp/include/STANDARD-MIB.hrl").
--include("hal.hrl").
+-include("../include/OTP-OS-MON-MIB.hrl").
+-include("../include/OTP-MIB.hrl").
+-include("../include/hal.hrl").
 
 -export([handle_error/3, handle_agent/5, handle_pdu/4, handle_trap/3, handle_inform/3, handle_report/3]).
 -export([home/3, snmp/3]).
-
-snmp(SessionId, Env, _Input) ->
-    mod_esi:deliver(SessionId, ["Content-Type:application/json\r\n\r\n" |
-    mochijson2:encode({struct, [{disks, lists:flatten([disk_info(Agent) || Agent <- snmpm:which_agents(), Agent=:=agent_id(Env)])}] })]).
 
 home(SessionId, Env, _Input) ->
     mod_esi:deliver(SessionId, ["Content-Type:text/html\r\n\r\n" | home(Env)]).
@@ -31,29 +29,50 @@ home([{http_host, Host} | _Env]) ->
 home([{_, _} | Env]) ->
     home(Env).
 
-% Info 
-disk_info(Agent)->
-    [prepare_disk_json(D) || D <- get_row(?diskTableEntry, ?diskTableRow, Agent, []), D/=[], validate_disk_row(D)/=[]].
+snmp(SessionId, Env, _Input) ->
+    mod_esi:deliver(SessionId, ["Content-Type:application/json\r\n\r\n" |
+    mochijson2:encode({struct, [rotate_info(query_token(4, Env), Agent) || Agent<-snmpm:which_agents(), Agent=:=query_token(2, Env)]}) ]).
 
-prepare_disk_json([{_, Mount},{_, Size},{_, Use}])->
-    {struct, [{mount, iolist_to_binary(Mount)}, {size, Size}, {use, Use}]}.
+rotate_info(Cursor, Agent)->
+    case Cursor of
+	"mem" ->
+	    {disks, disk_info(Agent)};
+	"disks" -> 
+	    {mem, [mem_info(Agent)]};
+	_ -> 
+	    {disks, disk_info(Agent)}
+    end.
 
-node_info(Agent) ->
-    [].
+disk_info(Agent)-> %% multirow
+    [{struct, [{mount, iolist_to_binary(Mount)}, {size, Size}, {use, Use}]}
+    || [Mount, Size, Use] <- get_next_row(Agent, ?diskEntry, ?diskTableRow, [?diskId], [?diskEntry++[Col] || Col<-?diskTableRow], [])].
 
-% snmp
-get_row(_Prefix, [], _Agent, Acc)-> Acc;
-get_row(Prefix, Oids, Agent, Acc) ->
+mem_info(Agent) -> %% single row. 13 - hack to otp table.
+    {struct, lists:zip([total, used], get_row(Agent, [ ?loadEntry++[Col]++[13|node_name(Agent)] || Col<-?memTableRow]) )}.
+
+node_name(Agent)->
+    case snmpm:sync_get("kakauser", Agent, [?erlNodeEntry++[?erlNodeName, ?erlNodeId]]) of
+	{ok, {_,_,[{varbind, _, _, Val, _}]},_} -> Val;
+	{error, _Reason} -> []
+    end.
+
+get_row(Agent, Oids)->
+    case snmpm:sync_get("kakauser", Agent, Oids) of 
+        {ok, {_,_,Vb},_}->
+	    [Val || {varbind, _Oid, _, Val, _} <-Vb];
+        {error, _Reason} -> []
+    end.
+
+get_next_row(_, _, _, _, [], Acc) ->
+    [Row || Row <- Acc, Row/=[]];
+get_next_row(Agent, TableId, Cols, RowId, Oids, Acc)->
     case snmpm:sync_get_next("kakauser", Agent, Oids) of
-	{ok, {_Es, _Ei, Vb}, _R} -> 
-	    Resp = validate_oids([{Oid, Value} || {varbind, Oid, _Tp, Value, _Rid} <- Vb, lists:prefix(Prefix, Oid)=:=true], length(Oids)),
-	    NextOids = [Oid || {Oid, _} <- Resp];
-	{error, Reason} ->
-	    Resp =[],
-	    NextOids=[],
-	    error_log:error_msg("SNMP request failed: ~p~n", [Reason])
+	{ok, {_, _, Vb}, _R} ->
+	    Values =[{Oid, Val} || {varbind, Oid, _, Val, _} <- Vb,  Col <- Cols, lists:prefix(TableId++[Col]++RowId, Oid)];
+	{error, _Reason} ->
+	    Values=[]
     end,
-    get_row(Prefix, NextOids, Agent, [Resp|Acc]).
+    get_next_row(Agent, TableId, Cols, RowId, [Oid || {Oid, _} <- Values], [[Value || {_, Value} <- Values]|Acc]).
 
 handle_error(_ReqId, _Reason, _UserData) -> ignore. % Ignore errors
 handle_agent(_Addr, _Port, _Type, _SnmpInfo, _UserData) -> ignore. % Ignore an unknown  agents
@@ -63,14 +82,8 @@ handle_inform(_TargetName, _SnmpInformInfo, _UserData) -> ignore. % Ignore info 
 handle_report(_TargetName, _SnmpReportInfo, _UserData) -> ignore. % Ignore reports
 
 % Utils TODO: consider refactoring
-validate_disk_row(D = [{?diskMount++[?diskEntryNo,_], _},{?diskSize++[?diskEntryNo,_], _},{?diskUse++[?diskEntryNo,_], _}])-> D; % Take 1st entry
-validate_disk_row(_)-> [].
-
-validate_oids(Vbs, L) when length(Vbs) =:= L -> Vbs;
-validate_oids(_, _) -> [].
-
-agent_id([])-> ok;
-agent_id([{query_string, Str} | _])->
-    lists:nth(1, string:tokens(Str, "id= &cursor= &_="));
-agent_id([{_,_}|Env])->
-    agent_id(Env).
+query_token(_,[])->ok;
+query_token(N,[{query_string, Str}|_])->
+    lists:nth(N, string:tokens(Str, "=&_"));
+query_token(N,[{_,_}|Env])->
+    query_token(N, Env).
