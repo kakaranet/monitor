@@ -16,6 +16,7 @@ home([{http_host, Host} | _Env]) ->
     "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"http://"++Host++"/hal.css\" />"++
     "<script type=\"text/javascript\" src=\"http://"++ Host++"/jquery.js\"></script>"++
     "<script type=\"text/javascript\" src=\"http://"++ Host++"/hal.js\"></script>"++
+    "<script type=\"text/javascript\" src=\"http://"++ Host++"/hist.js\"></script>"++
     "<script>function comet(el){$.ajax({ type: 'Get', url: 'http://"++Host++"/monitor/hal:snmp?id=' + $(el).attr('id') + '&cursor=' + $(el).attr('class'),"++ 
     "async: true, cache: false, dataType: \"json\","++
     "success : function(data){handleAgentData(el, data);}, error: function(XMLHttpRequest, textStatus, error){ handleError(el, textStatus);}});}" ++
@@ -38,17 +39,23 @@ rotate_info(Cursor, Agent)->
 	"mem" ->
 	    {disks, disk_info(Agent)};
 	"disks" -> 
+	    {dht, dht_info(Agent)};
+	"dht" -> 
 	    {mem, [mem_info(Agent)]};
 	_ -> 
 	    {disks, disk_info(Agent)}
     end.
 
-disk_info(Agent)-> %% multirow
+disk_info(Agent)->
     [{struct, [{mount, iolist_to_binary(Mount)}, {size, Size}, {use, Use}]}
     || [Mount, Size, Use] <- get_next_row(Agent, ?diskEntry, ?diskTableRow, [?diskId], [?diskEntry++[Col] || Col<-?diskTableRow], [])].
 
-mem_info(Agent) -> %% single row. 13 - hack to otp table.
-    {struct, lists:zip([total, used], get_row(Agent, [ ?loadEntry++[Col]++[13|node_name(Agent)] || Col<-?memTableRow]) )}.
+dht_info(Agent)->
+    DHTArray = get_next_row(Agent, ?dhtArrayEntry, [?value],  [?dhtArrayEntry++[?value]], []),
+    lists:flatten(lists:sublist(DHTArray,1,6)).
+
+mem_info(Agent) ->
+    {struct, lists:zip([total, used], get_row(Agent, [ ?memEntry++[Col] || Col<-?memTableRow]) )}.
 
 node_name(Agent)->
     case snmpm:sync_get("kakauser", Agent, [?erlNodeEntry++[?erlNodeName, ?erlNodeId]]) of
@@ -73,6 +80,17 @@ get_next_row(Agent, TableId, Cols, RowId, Oids, Acc)->
 	    Values=[]
     end,
     get_next_row(Agent, TableId, Cols, RowId, [Oid || {Oid, _} <- Values], [[Value || {_, Value} <- Values]|Acc]).
+
+get_next_row(_, _, _, [], Acc) ->
+    [Row || Row <- Acc, Row/=[]];
+get_next_row(Agent, TableId, Cols, Oids, Acc)->
+    case snmpm:sync_get_next("kakauser", Agent, Oids) of
+	{ok, {_, _, Vb}, _R} ->
+	    Values =[{Oid, Val} || {varbind, Oid, _, Val, _} <- Vb,  Col <- Cols, lists:prefix(TableId++[Col], Oid)];
+	{error, _Reason} ->
+	    Values=[]
+    end,
+    get_next_row(Agent, TableId, Cols, [Oid || {Oid, _} <- Values], [[Value || {_, Value} <- Values]|Acc]).
 
 handle_error(_ReqId, _Reason, _UserData) -> ignore. % Ignore errors
 handle_agent(_Addr, _Port, _Type, _SnmpInfo, _UserData) -> ignore. % Ignore an unknown  agents

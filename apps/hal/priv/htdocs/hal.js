@@ -1,14 +1,17 @@
-function handleAgentData(el, jsonData){
-    
-    for(var i in jsonData){
-    console.log("Element of object:"+ jsonData[i]);
+function handleAgentData(el, jsonData)
+{
+    for (var i in jsonData)
+    {
+        console.log("Element of object:"+ jsonData[i]);
     }
     console.log(JSON.stringify(jsonData));
 
-    for(id in jsonData){
-	if(jsonData.hasOwnProperty(id)){
-	    $(el).removeClass(function(){$(this).attr('class')}); 
-	    $(el).addClass(id);
+    for(id in jsonData)
+    {
+        if(jsonData.hasOwnProperty(id))
+        {
+            $(el).removeClass(function(){$(this).attr('class')}); 
+            $(el).addClass(id);
 	}
     }
 
@@ -26,12 +29,26 @@ function handleAgentData(el, jsonData){
 	ctx.fillStyle="#aa54ff";
 	total = jsonData.mem.total;
 	used = jsonData.mem.used;
+    } else if(jsonData.dht){
+	ctx.fillStyle='#777777';
+	blockName = "DHT";
     }
 
     ctx.fillRect(0,0,200,200);
     ctx.font="bold 45px Ubuntu";
     ctx.fillStyle="#FFFFFF";
-    ctx.fillText(blockName,70,140);
+    ctx.fillText(blockName,70,160);
+
+    if(jsonData.dht){
+	console.log("DHT is array? "+ (jsonData.dht.constructor == Array));
+	ctx.font='7px Ubuntu';
+	ctx.strokeStyle='#FFFFFF';
+	ctx.fillStyle='#FFFFFF';
+	ctx.lineWidth = 1;
+	hist(ctx, jsonData.dht, 20,20,160,100, 12);
+	console.log("Hist " + jsonData.dht);
+    }
+
 
     if(jsonData.disks){
 	ctx.fillStyle="#FFFFFF";
@@ -47,6 +64,17 @@ function handleAgentData(el, jsonData){
 	    ctx.fillText(disk.size, 100, y);
 	    ctx.fillText(disk.use, 172, y);
 	});
+
+	ctx.strokeStyle="#FFFFFF";
+	ctx.lineWidth=1;
+	ctx.beginPath();
+	ctx.moveTo(10,23);ctx.lineTo(20, 23);
+	ctx.moveTo(27,23);ctx.lineTo(67, 23);
+	ctx.moveTo(100,23);ctx.lineTo(150, 23);
+	ctx.moveTo(160,23);ctx.lineTo(190, 23);
+	ctx.closePath();
+	ctx.stroke();
+
     }
 
     if(jsonData.loads){
@@ -66,17 +94,6 @@ function handleAgentData(el, jsonData){
 	ctx.fillText("used: "+jsonData.mem[0].used, 10,68);
     }
 
-    if(jsonData.disks){
-	ctx.strokeStyle="#FFFFFF";
-	ctx.lineWidth=1;
-	ctx.beginPath();
-	ctx.moveTo(10,23);ctx.lineTo(20, 23);
-	ctx.moveTo(27,23);ctx.lineTo(67, 23);
-	ctx.moveTo(100,23);ctx.lineTo(150, 23);
-	ctx.moveTo(160,23);ctx.lineTo(190, 23);
-	ctx.closePath();
-	ctx.stroke();
-    }    
     ctx.fillStyle="#FFFFFF";
     ctx.font="bold 15px Ubuntu";
     ctx.fillText($(el).attr("id"),10,180);
