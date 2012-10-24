@@ -48,20 +48,14 @@ rotate_info(Cursor, Agent)->
 
 disk_info(Agent)->
     [{struct, [{mount, iolist_to_binary(Mount)}, {size, Size}, {use, Use}]}
-    || [Mount, Size, Use] <- get_next_row(Agent, ?diskEntry, ?diskTableRow, [?diskId], [?diskEntry++[Col] || Col<-?diskTableRow], [])].
+    || [Mount, Size, Use] <- get_next_row(Agent, ?diskEntry, ?diskTableRow, [?diskEntry++[Col] || Col<-?diskTableRow], [], [?diskId])].
 
 dht_info(Agent)->
-    DHTArray = get_next_row(Agent, ?dhtArrayEntry, [?value],  [?dhtArrayEntry++[?value]], []),
+    DHTArray = get_next_row(Agent, ?dhtArrayEntry, [?value],  [?dhtArrayEntry++[?value]], [], []),
     lists:flatten(lists:sublist(DHTArray,1,6)).
 
 mem_info(Agent) ->
-    {struct, lists:zip([total, used], get_row(Agent, [ ?memEntry++[Col] || Col<-?memTableRow]) )}.
-
-node_name(Agent)->
-    case snmpm:sync_get("kakauser", Agent, [?erlNodeEntry++[?erlNodeName, ?erlNodeId]]) of
-	{ok, {_,_,[{varbind, _, _, Val, _}]},_} -> Val;
-	{error, _Reason} -> []
-    end.
+    {struct, lists:zip([total, used], get_row(Agent, [?memEntry++[Col]++[?memRowId] || Col<-?memTableRow]) )}.
 
 get_row(Agent, Oids)->
     case snmpm:sync_get("kakauser", Agent, Oids) of 
@@ -70,27 +64,16 @@ get_row(Agent, Oids)->
         {error, _Reason} -> []
     end.
 
-get_next_row(_, _, _, _, [], Acc) ->
+get_next_row(_, _, _, [], Acc, _TmpRowIndex) ->
     [Row || Row <- Acc, Row/=[]];
-get_next_row(Agent, TableId, Cols, RowId, Oids, Acc)->
+get_next_row(Agent, TableId, Cols, Oids, Acc, TmpRowIndex)->
     case snmpm:sync_get_next("kakauser", Agent, Oids) of
 	{ok, {_, _, Vb}, _R} ->
-	    Values =[{Oid, Val} || {varbind, Oid, _, Val, _} <- Vb,  Col <- Cols, lists:prefix(TableId++[Col]++RowId, Oid)];
+	    Values =[{Oid, Val} || {varbind, Oid, _, Val, _} <- Vb,  Col <- Cols, lists:prefix(TableId++[Col]++TmpRowIndex, Oid)];
 	{error, _Reason} ->
 	    Values=[]
     end,
-    get_next_row(Agent, TableId, Cols, RowId, [Oid || {Oid, _} <- Values], [[Value || {_, Value} <- Values]|Acc]).
-
-get_next_row(_, _, _, [], Acc) ->
-    [Row || Row <- Acc, Row/=[]];
-get_next_row(Agent, TableId, Cols, Oids, Acc)->
-    case snmpm:sync_get_next("kakauser", Agent, Oids) of
-	{ok, {_, _, Vb}, _R} ->
-	    Values =[{Oid, Val} || {varbind, Oid, _, Val, _} <- Vb,  Col <- Cols, lists:prefix(TableId++[Col], Oid)];
-	{error, _Reason} ->
-	    Values=[]
-    end,
-    get_next_row(Agent, TableId, Cols, [Oid || {Oid, _} <- Values], [[Value || {_, Value} <- Values]|Acc]).
+    get_next_row(Agent, TableId, Cols, [Oid || {Oid, _} <- Values], [[Value || {_, Value} <- Values]|Acc], TmpRowIndex).
 
 handle_error(_ReqId, _Reason, _UserData) -> ignore. % Ignore errors
 handle_agent(_Addr, _Port, _Type, _SnmpInfo, _UserData) -> ignore. % Ignore an unknown  agents
