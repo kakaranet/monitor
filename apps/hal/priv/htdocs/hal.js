@@ -19,17 +19,20 @@ function handleAgentData(el, jsonData)
         var ctx = $(el)[0].getContext("2d");
         var blockName;
         if(jsonData.disks){
-	        blockName = "DSK";
+	    blockName = "DSK";
             ctx.fillStyle="#063831";
         }else if(jsonData.loads){
     	    blockName = "SYS";
         }else if(jsonData.mem){
-	        blockName = "MEM";
-	        ctx.fillStyle="#552a49";
+	    blockName = "MEM";
+	    ctx.fillStyle="#552a49";
         } else if(jsonData.dht){
-	        ctx.fillStyle='#0c4a7b';
-	        blockName = "DHT";
-        }
+	    ctx.fillStyle='#0c4a7b';
+	    blockName = "DHT";
+        } else if(jsonData.dht2){
+	    ctx.fillStyle="#0c4a7b";
+	    blockName = "DH2";
+	}
 
         ctx.fillRect(0,0,200,200);
         ctx.font="bold 45px Ubuntu";
@@ -99,6 +102,30 @@ function handleAgentData(el, jsonData)
             ctx.textAlign="left";
         }
 
+        if(jsonData.dht2){
+	    $.each(jsonData.dht2, function(i, block){
+	    ctx.fillStyle="#FFFFFF";
+	    ctx.font="bold 12px Ubuntu";
+	    ctx.textAlign="left";
+	    ctx.fillText("Hangoff timeout:", 16, 32);
+	    ctx.fillText("GET's total:", 16, 50);
+	    ctx.fillText("PUT's total:", 16, 68);
+	    ctx.fillText("CPU avg15:", 16, 84);
+	    ctx.fillText("GET time median:", 16, 102);
+	    ctx.fillText("PUT time median:", 16, 120);
+	    ctx.fillStyle="#FFFFFF";
+	    ctx.textAlign="right";
+	    ctx.font="15px Ubuntu";
+	    ctx.fillText(block.handoff_timeouts, 184, 32);
+	    ctx.fillText(block.node_gets_total, 184, 50);
+	    ctx.fillText(block.node_puts_total, 184, 68);
+	    ctx.fillText(block.cpu_avg15, 184, 84);
+	    ctx.fillText(asciiToString(block.node_get_fsm_time_median), 184, 102);
+	    ctx.fillText(asciiToString(block.node_put_fsm_time_median), 184, 120);
+	    ctx.textAlign="left";
+	    });
+        }
+
         ctx.fillStyle="#FFFFFF";
         ctx.font="bold 15px Ubuntu";
         ctx.fillText($(el).attr("id"),15,183);
@@ -117,6 +144,15 @@ function in_canvas(canvas, x, y){
     }else{
         return false;
     }
+}
+
+function asciiToString (asciiArray){
+    var str = "";
+    var len = asciiArray.length;
+    for(var i=0; i<len; i++){
+	str += String.fromCharCode(asciiArray[i]);
+    }
+    return str;
 }
 
 GMX = 0;

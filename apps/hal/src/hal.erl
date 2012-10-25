@@ -1,10 +1,7 @@
 -module(hal).
 -behaviour(snmpm_user).
 -include_lib("inets/include/httpd.hrl").
--include_lib("snmp/include/STANDARD-MIB.hrl").
--include("../include/OTP-OS-MON-MIB.hrl").
--include("../include/OTP-MIB.hrl").
--include("../include/hal.hrl").
+-include("hal.hrl").
 
 -export([handle_error/3, handle_agent/5, handle_pdu/4, handle_trap/3, handle_inform/3, handle_report/3]).
 -export([home/3, snmp/3]).
@@ -41,6 +38,8 @@ rotate_info(Cursor, Agent)->
 	"disks" -> 
 	    {dht, dht_info(Agent)};
 	"dht" -> 
+	    {dht2, [dht2_info(Agent)]};
+	"dht2" -> 
 	    {mem, [mem_info(Agent)]};
 	_ -> 
 	    {disks, disk_info(Agent)}
@@ -56,6 +55,9 @@ dht_info(Agent)->
 
 mem_info(Agent) ->
     {struct, lists:zip([total, used], get_row(Agent, [?memEntry++[Col]++[?memRowId] || Col<-?memTableRow]) )}.
+
+dht2_info(Agent) ->
+    {struct, lists:zip(?dht2RowMetrics, get_row(Agent, [?dht2Entry++[Col]++[?dhtIndex] || Col<-?dht2Row]) )}.
 
 get_row(Agent, Oids)->
     case snmpm:sync_get("kakauser", Agent, Oids) of 
@@ -84,7 +86,5 @@ handle_report(_TargetName, _SnmpReportInfo, _UserData) -> ignore. % Ignore repor
 
 % Utils TODO: consider refactoring
 query_token(_,[])->ok;
-query_token(N,[{query_string, Str}|_])->
-    lists:nth(N, string:tokens(Str, "=&_"));
-query_token(N,[{_,_}|Env])->
-    query_token(N, Env).
+query_token(N,[{query_string, Str}|_])-> lists:nth(N, string:tokens(Str, "=&_"));
+query_token(N,[{_,_}|Env])-> query_token(N, Env).
