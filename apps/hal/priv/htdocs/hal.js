@@ -19,30 +19,27 @@ function handleAgentData(el, jsonData)
         var ctx = $(el)[0].getContext("2d");
         var blockName;
         if(jsonData.disks){
-	        blockName = "D S K";
+	        blockName = "DSK";
             ctx.fillStyle="#063831";
         }else if(jsonData.loads){
-    	    blockName = "S Y S";
+    	    blockName = "SYS";
         }else if(jsonData.mem){
-	        blockName = "M E M";
+	        blockName = "MEM";
 	        ctx.fillStyle="#552a49";
         } else if(jsonData.dht){
 	        ctx.fillStyle='#0c4a7b';
-	        blockName = "D H T";
+	        blockName = "DHT";
         }
 
         ctx.fillRect(0,0,200,200);
         ctx.font="bold 45px Ubuntu";
         ctx.fillStyle="#F5F5F5";
         ctx.textAlign="right";
-        if(blockName == "M E M"){   // I don't have letter spacing on canvas, and I need an exception for Ms badly so this have to do
-            ctx.fillText("M",184,184);
-            ctx.fillText("E",138,184);
-            ctx.fillText("M",105,184);
-        }else{
-            ctx.fillText(blockName,184,184);
-        }
+        ctx.fillText(blockName[2],184,184);
+        ctx.textAlign="center";
+        ctx.fillText(blockName[1],127,184);
         ctx.textAlign="left";
+        ctx.fillText(blockName[0],70,184);
 
         if(jsonData.dht){
     	    console.log("DHT is array? "+ (jsonData.dht.constructor == Array));
@@ -113,7 +110,7 @@ function handleError(el, error){
     setTimeout(function(){comet(el);el=null}, 5000);
 }
 
-function in_canvas(canvas, x, y){   // I want a square to stop changing as someone is touching it. 
+function in_canvas(canvas, x, y){
     br = canvas.getBoundingClientRect();
     if(x > br.left && x < br.left+br.width && y > br.top && y < br.top+br.height){
         return true;
@@ -131,7 +128,7 @@ document.onmousemove = function(e){
 
 /*
 
-HAL colors (from http://www.halproject.com/hal/ )
+HAL colors
 blue
 245c9d
 0c4a7b
