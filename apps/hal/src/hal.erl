@@ -11,6 +11,7 @@ home(SessionId, Env, _Input) ->
 
 home([{http_host, Host} | _Env]) ->
     "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"http://"++Host++"/hal.css\" />"++
+    "<!--[if IE]><script type=\"text/javascript\" src=\"http://"++ Host++"/excanvas.compiled.js\"></script><![endif]-->"++
     "<script type=\"text/javascript\" src=\"http://"++ Host++"/jquery.js\"></script>"++
     "<script type=\"text/javascript\" src=\"http://"++ Host++"/hal.js\"></script>"++
     "<script type=\"text/javascript\" src=\"http://"++ Host++"/hist.js\"></script>"++
