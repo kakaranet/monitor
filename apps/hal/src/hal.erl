@@ -26,7 +26,20 @@ home([{http_host, Host} | _Env]) ->
     "<li><canvas id=\"game\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "<li><canvas id=\"web\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "<li><canvas id=\"rabbit\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
-    "</ul></div></body></html>";
+    "</ul>"++
+    "<ul>"++
+    "<li><canvas id=\"app@srv1\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "<li><canvas id=\"game@srv1\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "<li><canvas id=\"web@srv1\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "<li><canvas id=\"rabbit@srv1\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "</ul>"++
+    "<ul>"++
+    "<li><canvas id=\"app@srv2\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "<li><canvas id=\"game@srv2\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "<li><canvas id=\"web@srv2\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "<li><canvas id=\"rabbit@srv2\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "</ul>"++
+    "</div></body></html>";
 home([{_, _} | Env]) ->
     home(Env).
 

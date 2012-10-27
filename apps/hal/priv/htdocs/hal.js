@@ -156,8 +156,8 @@ function draw(el, jsonData){
     }
 
     ctx.fillStyle="#FFFFFF";
-    ctx.font="bold 15px Ubuntu";
-    ctx.fillText($(el).attr("id"),15,183);    
+    ctx.font="bold 7px Ubuntu";
+    ctx.fillText($(el).attr("id"),15,183);
 }
 
 function handleError(el, error){
