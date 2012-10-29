@@ -64,6 +64,7 @@ function tab(ct, row_names, col_names, cols,   x,y, w,dh,  number_fun = short_r,
 }
 
 function long_n(n){
+    if(!is_number(n))return n;
     var sn = "" + n;
     for(var i=0; i<8; i++){
         MN = 3+i*4;
@@ -75,6 +76,7 @@ function long_n(n){
 }
 
 function short_n(n){
+    if(!is_number(n))return n;
     var sn = "" + n;
     if(sn.length>4 && sn.length<=7){
         sn = long_n(sn.substring(0, sn.length-3)) + " k";
@@ -95,6 +97,7 @@ function short_n(n){
 }
 
 function short_bytes(n){
+    if(!is_number(n))return n;
     if(n<1024*10){
         return ""+n+" B";
     }else if(n<1024*1024*10){
@@ -113,6 +116,7 @@ function short_bytes(n){
 }
 
 function short_r(n){
+    if(!is_number(n))return n;
     if(n>=1000){
         return short_n(n|0);
     }else if(n>=1){
@@ -129,4 +133,8 @@ function short_r(n){
 }
 function no_n(n){
     return "";
+}
+
+function is_number(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
 }
