@@ -1,4 +1,7 @@
-function hist(ct, data,   x,y, w,h,  dh, number_fun = short_n){
+function hist(ct, data,   x,y, w,h,  dh, number_fun){
+    if(number_fun == undefined){
+        number_fun = short_n;
+    }
     var MaxX = Math.max.apply(null, data);
     var DX = (w/data.length) | 0;
     for(var i=0; i<data.length; i++){
@@ -14,13 +17,17 @@ function hist(ct, data,   x,y, w,h,  dh, number_fun = short_n){
         ct.textBaseline = 'middle';
         ct.textAlign = 'center';
         var sn = number_fun(data[i]);
+        console.log('sn '+sn);
         ct.fillText(sn, x+X + (W/2)|0, y+Y-dh/2);
         ct.textBaseline = old_baseline;
         ct.textAlign = old_text_align;
     }
 }
 
-function tab(ct, row_names, col_names, cols,   x,y, w,dh,  number_fun = short_r, inner_font=''){
+function tab(ct, row_names, col_names, cols,   x,y, w,dh,  number_fun, inner_font){
+    if(number_fun == undefined){
+        number_fun = short_n;
+    }
     var W = cols.length;
     var H = cols[0].length;
     var old_baseline = ct.textBaseline;
@@ -48,7 +55,7 @@ function tab(ct, row_names, col_names, cols,   x,y, w,dh,  number_fun = short_r,
     }
 
     var old_font = ct.font;
-    if(inner_font!=''){
+    if(inner_font!=undefined){
         ct.font = inner_font;
     }
 
