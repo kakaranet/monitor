@@ -16,7 +16,7 @@
             <canvas id='h2' width=200 height=200 style='margin-left:10px; background-color:#cccccc;'></canvas>
             <canvas id='h3' width=200 height=200 style='margin-left:10px; background-color:#714e90;'></canvas>
             <canvas id='h4' width=200 height=200 style='margin-left:10px; background-color:#245c9d;'></canvas>
-            <script language="JavaScript" src="hist.js"></script>
+            <script type="text/javascript" src="hist.js"></script>
             <script>
             var h1 = document.getElementById("h1");
             var h1_с = h1.getContext("2d");    
@@ -181,7 +181,7 @@
                 t4_с.globalAlpha=0.8;
                 t4_с.fillStyle='#FFFFFF';
                 tab(t4_с, [], ["Some", "Fake", "Data"], [['5:05','6:25','9:15', '―'],['―','5:30','7:00','9:45'],['any', 'data' ,'will','do']], 20,26, 160,22, 
-                    function(n){return n;},
+                    short_n,
                     '16px Ubuntu');
                 t4_с.globalAlpha=1.0;
 
