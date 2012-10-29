@@ -3,127 +3,189 @@
 <HEAD>
     <TITLE>Histogram</TITLE>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=UTF-8">
-    <META HTTP-EQUIV="KEYWORDS" CONTENT="canvas testing">
+    <META HTTP-EQUIV="KEYWORDS" CONTENT="data representation tools">
     <LINK REV="MAIL:" HREF="mailto:akalenuk@gmail.com">
+    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin'>
 </HEAD>
-<BODY topmargin=0 leftmargin=0 marginwidth=0 marginheight=0>
-    <canvas id='t1' width=200 height=200"z></canvas>
-    <canvas id='t2' width=200 height=200"></canvas>
-    <canvas id='t3' width=200 height=200"></canvas>
-    <canvas id='t4' width=200 height=200"></canvas>
-    <script language="JavaScript" src="hist.js"></script>
-    <script>
-        var t1 = document.getElementById("t1");
-        var t1_context = t1.getContext("2d");    
-        t1_context.fillStyle='#777777';
-        t1_context.fillRect(0, 0, 200, 200);
+<BODY style='font-family:Ubuntu'>
+    <table border=0>
+        <tr><td>
+            <br>
+            <h2>Histograms</h2>
+            <canvas id='h1' width=200 height=200 style='background-color:#33583a;'></canvas>
+            <canvas id='h2' width=200 height=200 style='margin-left:10px; background-color:#cccccc;'></canvas>
+            <canvas id='h3' width=200 height=200 style='margin-left:10px; background-color:#714e90;'></canvas>
+            <canvas id='h4' width=200 height=200 style='margin-left:10px; background-color:#245c9d;'></canvas>
+            <script language="JavaScript" src="hist.js"></script>
+            <script>
+            var h1 = document.getElementById("h1");
+            var h1_с = h1.getContext("2d");    
 
-        t1_context.font='10px Ubuntu';
-        t1_context.strokeStyle='#FFFFFF';
-        t1_context.fillStyle='#FFFFFF';
-        t1_context.lineWidth = 1;
-        hist(t1_context, [562,858,926,905,852,998],  20,20,160,100,  12);
-
-
-
-        var t2 = document.getElementById("t2");
-        var t2_context = t2.getContext("2d");    
-        t2_context.fillStyle='#AA9999';
-        t2_context.fillRect(0, 0, 200, 200);
-
-        t2_context.font='10px Ubuntu';
-        t2_context.strokeStyle='#000000';
-        t2_context.fillStyle='#AA9999';
-        t2_context.lineWidth = 0.8;
-        hist(t2_context, [352,352,352,352,352],  20,20,160,160,  12);
-
-        t2_context.lineWidth = 1.0;
-        t2_context.fillStyle='#333333';
-        hist(t2_context, [123,166,214,287,352],  20,20,160,160,  12);
+            h1_с.font='10px Ubuntu';
+            h1_с.strokeStyle='#FFFFFF';
+            h1_с.fillStyle='#FFFFFF';
+            h1_с.lineWidth = 1;
+            hist(h1_с, [562,858,926,905,852,998],  20,20,160,100,  12);
 
 
 
-        var t3 = document.getElementById("t3");
-        var t3_context = t3.getContext("2d");    
-        t3_context.fillStyle='#444477';
-        t3_context.fillRect(0, 0, 200, 200);
+            var h2 = document.getElementById("h2");
+            var h2_с = h2.getContext("2d");    
 
-        t3_context.font='12px Ubuntu';
-        t3_context.strokeStyle='#FFFFFF';
-        t3_context.fillStyle='#FFFFFF';
-        t3_context.lineWidth = 1.4;
-        hist(t3_context, [5, 4, 7, 2, 9, 1, 8, 3, 6],  50,30,100,100,  14);
+            h2_с.font='10px Ubuntu';
+            h2_с.strokeStyle='#000000';
+            h2_с.fillStyle='#AA9999';
+            h2_с.lineWidth = 0.8;
+            hist(h2_с, [352,352,352,352,352],  20,20,160,160,  12, no_n);
+
+            h2_с.lineWidth = 1.0;
+            h2_с.fillStyle='#333333';
+            hist(h2_с, [3234,3667,6146,7878,12523],  20,20,160,160,  12);
 
 
+            var h3 = document.getElementById("h3");
+            var h3_с = h3.getContext("2d");    
 
-        var t4 = document.getElementById("t4");
-        var t4_context = t4.getContext("2d");    
-        t4_context.fillStyle='#EEEEEE';
-        t4_context.fillRect(0, 0, 200, 200);
+            h3_с.font='12px Ubuntu';
+            h3_с.strokeStyle='#FFFFFF';
+            h3_с.fillStyle='#FFFFFF';
+            h3_с.lineWidth = 1.4;
+            hist(h3_с, [57559, 446386, 7234423],  20,30,160,100,  14, long_n);
 
-        t4_context.font='12px Ubuntu';
-        t4_context.strokeStyle='#555555';
-        t4_context.fillStyle='#EEEEEE';
-        t4_context.lineWidth = 1.4;
-        hist(t4_context, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97],  20,20,160,80,  14);
 
-        document.write("<br>");
+            var h4 = document.getElementById("h4");
+            var h4_с = h4.getContext("2d");    
 
-        document.write("<div style='text-align:right; width:400px; float:left;'>");
+            h4_с.font='12px Ubuntu';
+            h4_с.lineWidth = 1.4;
+            h4_с.strokeStyle='#000033';
+            hist(h4_с, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97],  20.5,20.5,160,80,  14, no_n);
+            </script>
+        </td></tr><tr><td>
+            <script>
+            document.write("<br><br><h2>Numbers</h2>");
+        
+            document.write("<div style='text-align:right; width:200px; float:left;'>");
+            document.write(long_n(1) + "<br>");
+            document.write(long_n(12) + "<br>");
+            document.write(long_n(123) + "<br>");
+            document.write(long_n(1234) + "<br>");
+            document.write(long_n(12345) + "<br>");
+            document.write(long_n(123456) + "<br>");
+            document.write(long_n(1234567) + "<br>");
+            document.write(long_n(12345678) + "<br>");
+            document.write(long_n(123456789) + "<br>");
+            document.write(long_n(1234567890) + "<br>");
+            document.write(long_n(12345678901) + "<br>");
+            document.write(long_n(123456789012) + "<br>");
+            document.write(long_n(1234567890123) + "<br>");
+            document.write(long_n(12345678901234) + "<br>");
+            document.write(long_n(123456789012345) + "<br>");
+            document.write("</div>");
 
-        document.write(long_n(1) + "<br>");
-        document.write(long_n(12) + "<br>");
-        document.write(long_n(123) + "<br>");
-        document.write(long_n(1234) + "<br>");
-        document.write(long_n(12345) + "<br>");
-        document.write(long_n(123456) + "<br>");
-        document.write(long_n(1234567) + "<br>");
-        document.write(long_n(12345678) + "<br>");
-        document.write(long_n(123456789) + "<br>");
-        document.write(long_n(1234567890) + "<br>");
-        document.write(long_n(12345678901) + "<br>");
-        document.write(long_n(123456789012) + "<br>");
-        document.write(long_n(1234567890123) + "<br>");
-        document.write(long_n(12345678901234) + "<br>");
-        document.write(long_n(123456789012345) + "<br>");
+            document.write("<div style='padding-left:14px; float:left; width:200px;'>");
+            document.write(short_n(1) + "<br>");
+            document.write(short_n(12) + "<br>");
+            document.write(short_n(123) + "<br>");
+            document.write(short_n(1234) + "<br>");
+            document.write(short_n(12345) + "<br>");
+            document.write(short_n(123456) + "<br>");
+            document.write(short_n(1234567) + "<br>");
+            document.write(short_n(12345678) + "<br>");
+            document.write(short_n(123456789) + "<br>");
+            document.write(short_n(1234567890) + "<br>");
+            document.write(short_n(12345678901) + "<br>");
+            document.write(short_n(123456789012) + "<br>");
+            document.write(short_n(1234567890123) + "<br>");
+            document.write(short_n(12345678901234) + "<br>");
+            document.write(short_n(123456789012345) + "<br>");
+            document.write("</div>");
 
-        document.write("</div>");
-        document.write("<div style='padding-left:14px; float:left; width:200px;'>");
+            document.write("<div style='padding-left:14px; float:left; width:200px;'>");
+            document.write(short_bytes(1) + "<br>");
+            document.write(short_bytes(12) + "<br>");
+            document.write(short_bytes(123) + "<br>");
+            document.write(short_bytes(1234) + "<br>");
+            document.write(short_bytes(12345) + "<br>");
+            document.write(short_bytes(123456) + "<br>");
+            document.write(short_bytes(1234567) + "<br>");
+            document.write(short_bytes(12345678) + "<br>");
+            document.write(short_bytes(123456789) + "<br>");
+            document.write(short_bytes(1234567890) + "<br>");
+            document.write(short_bytes(12345678901) + "<br>");
+            document.write(short_bytes(123456789012) + "<br>");
+            document.write(short_bytes(1234567890123) + "<br>");
+            document.write(short_bytes(12345678901234) + "<br>");
+            document.write(short_bytes(123456789012345) + "<br>");
+            document.write("</div>");
 
-        document.write(short_n(1) + "<br>");
-        document.write(short_n(12) + "<br>");
-        document.write(short_n(123) + "<br>");
-        document.write(short_n(1234) + "<br>");
-        document.write(short_n(12345) + "<br>");
-        document.write(short_n(123456) + "<br>");
-        document.write(short_n(1234567) + "<br>");
-        document.write(short_n(12345678) + "<br>");
-        document.write(short_n(123456789) + "<br>");
-        document.write(short_n(1234567890) + "<br>");
-        document.write(short_n(12345678901) + "<br>");
-        document.write(short_n(123456789012) + "<br>");
-        document.write(short_n(1234567890123) + "<br>");
-        document.write(short_n(12345678901234) + "<br>");
-        document.write(short_n(123456789012345) + "<br>");
+            document.write("<div style='padding-left:14px; float:left; width:200px;'>");
+            document.write(short_r(123.456789) + "<br>");
+            document.write(short_r(12.3456789) + "<br>");
+            document.write(short_r(1.23456789) + "<br>");
+            document.write(short_r(0.123456789) + "<br>");
+            document.write(short_r(0.0123456789) + "<br>");
+            document.write(short_r(0.00123456789) + "<br>");
+            document.write(short_r(0.000123456789) + "<br>");
+            document.write(short_r(0.0000123456789) + "<br>");
+            document.write(short_r(0.00000123456789) + "<br>");
+            document.write(short_r(0.000000123456789) + "<br>");
+            document.write(short_r(0.0000000123456789) + "<br>");
+            document.write(short_r(0.00000000123456789) + "<br>");
+            document.write(short_r(0.000000000123456789) + "<br>");
+            document.write(short_r(0.0000000000123456789) + "<br>");
+            document.write(short_r(0.00000000000123456789) + "<br>");
+            document.write("</div>");
+            </script>
+        </td></tr><tr><td>
+            <br>
+            <h2>Tables</h2>
+            <canvas id='t1' width=200 height=200 style='background-color:#750024;'></canvas>
+            <canvas id='t2' width=200 height=200 style='margin-left:10px; background-color:#ccee99;'></canvas>
+            <canvas id='t3' width=200 height=200 style='margin-left:10px; background-color:#121214;'></canvas>
+            <canvas id='t4' width=200 height=200 style='margin-left:10px; background-color:#4b3351;'></canvas>
+            <script>
+                var t1 = document.getElementById("t1");
+                var t1_с = t1.getContext("2d");
+                t1_с.font='12px Ubuntu';
+                t1_с.globalAlpha=0.8;
+                t1_с.fillStyle='#FFFFFF';
+                tab(t1_с, ["One", "Two", "Three"], ["2", "3", "4", "5"], [[1,4,9],[1,8,27],[1,19,27*3],[1,32,27*27]], 20,26, 160,16, short_n, 'bold 12px Ubuntu');
+                t1_с.globalAlpha=1.0;
 
-        document.write("</div>");
-        document.write("<div style='padding-left:14px; float:left; width:200px;'>");
-        document.write(short_bytes(1) + "<br>");
-        document.write(short_bytes(12) + "<br>");
-        document.write(short_bytes(123) + "<br>");
-        document.write(short_bytes(1234) + "<br>");
-        document.write(short_bytes(12345) + "<br>");
-        document.write(short_bytes(123456) + "<br>");
-        document.write(short_bytes(1234567) + "<br>");
-        document.write(short_bytes(12345678) + "<br>");
-        document.write(short_bytes(123456789) + "<br>");
-        document.write(short_bytes(1234567890) + "<br>");
-        document.write(short_bytes(12345678901) + "<br>");
-        document.write(short_bytes(123456789012) + "<br>");
-        document.write(short_bytes(1234567890123) + "<br>");
-        document.write(short_bytes(12345678901234) + "<br>");
-        document.write(short_bytes(123456789012345) + "<br>");
+                var t2 = document.getElementById("t2");
+                var t2_с = t2.getContext("2d");
+                t2_с.font='16px Ubuntu';
+                t2_с.globalAlpha=0.8;
+                t2_с.fillStyle='#000000';
+                tab(t2_с, ["• First element", "• Second one", "• The third", "• The last one (4th)"], [], [[]], 20,26, 160,24);
+                t2_с.globalAlpha=1.0;
 
-        document.write("</div>");
-    </script>
+                var t3 = document.getElementById("t3");
+                var t3_с = t3.getContext("2d");
+                t3_с.font='14px Ubuntu';
+                t3_с.globalAlpha=0.9    ;
+                t3_с.fillStyle='#FFFFFF';
+                tab(t3_с, ["Small number", "Another one", "One more", "Even one more"], [], [[0.00000324, 0.0000267, 0.00000543, 0.00001823]], 20,26, 160,20,  
+                    function(x){return short_r(x)+"s"}, 
+                    '14px Ubuntu');
+
+                tab(t3_с, ["And total:"], [], [[0.0000536]], 55,116, 125,20,  
+                    function(x){return short_r(x)+"s"}, 
+                    '16px Ubuntu');
+                t3_с.globalAlpha=1.0;
+
+                var t4 = document.getElementById("t4");
+                var t4_с = t4.getContext("2d");
+                t4_с.font='bold 16px Ubuntu';
+                t4_с.globalAlpha=0.8;
+                t4_с.fillStyle='#FFFFFF';
+                tab(t4_с, [], ["Some", "Fake", "Data"], [['5:05','6:25','9:15', '―'],['―','5:30','7:00','9:45'],['any', 'data' ,'will','do']], 20,26, 160,22, 
+                    function(n){return n;},
+                    '16px Ubuntu');
+                t4_с.globalAlpha=1.0;
+
+            </script>
+        </td></tr>
+    </table>
 </BODY>
