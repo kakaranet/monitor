@@ -185,15 +185,32 @@ function asciiToString (asciiArray){
 var GMX = 0;
 var GMY = 0;
 document.onmousemove = function(e){
-    GMX = e.pageX;
-    GMY = e.pageY;
+    GMX = mouse_x(e);
+    GMY = mouse_y(e);
 }
 
 var GCX = 0;
 var GCY = 0;
 document.onclick = function(e){
-    GCX = e.pageX;
-    GCY = e.pageY;
+    GCX = mouse_x(e);
+    GCY = mouse_y(e);
+}
+
+
+function mouse_x(e){
+    if (e.pageX){
+        return e.pageX;
+    }else if (e.clientX) {
+        return e.clientX + xScrollLeft();
+    }
+}
+
+function mouse_y(e){
+    if (e.pageY){
+        return e.pageY;
+    }else if (e.clientY) {
+        return e.clientY + yScrollLeft();
+    }
 }
 
 /*
