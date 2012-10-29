@@ -145,3 +145,4 @@ function no_n(n){
 function is_number(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
+
