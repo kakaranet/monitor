@@ -24,19 +24,19 @@ home([{http_host, Host} | _Env]) ->
     "<div id=\"content\"><ul>"++
     "<li><canvas id=\"app\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "<li><canvas id=\"game\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
-    "<li><canvas id=\"web\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "<li><canvas id=\"public\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "<li><canvas id=\"rabbit\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "</ul>"++
     "<ul>"++
     "<li><canvas id=\"app@srv1\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "<li><canvas id=\"game@srv1\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
-    "<li><canvas id=\"web@srv1\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "<li><canvas id=\"public@srv1\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "<li><canvas id=\"rabbit@srv1\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "</ul>"++
     "<ul>"++
     "<li><canvas id=\"app@srv2\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "<li><canvas id=\"game@srv2\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
-    "<li><canvas id=\"web@srv2\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
+    "<li><canvas id=\"public@srv2\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "<li><canvas id=\"rabbit@srv2\" width=\"200\" height=\"200\" class=\"node\" style=\"background-color:#121214;\"></canvas></li>"++
     "</ul>"++
     "</div></body></html>";
@@ -86,10 +86,11 @@ get_next_row(_, _, _, [], Acc, _TmpRowIndex) ->
     [Row || Row <- Acc, Row/=[]];
 get_next_row(Agent, TableId, Cols, Oids, Acc, TmpRowIndex)->
     case snmpm:sync_get_next("kakauser", Agent, Oids) of
-	{ok, {_, _, Vb}, _R} ->
-	    Values =[{Oid, Val} || {varbind, Oid, _, Val, _} <- Vb,  Col <- Cols, lists:prefix(TableId++[Col]++TmpRowIndex, Oid)];
-	{error, _Reason} ->
-	    Values=[]
+	{ok, {noError, _, Vb}, _R}=T ->
+	    Values =[{Oid, Val} || {varbind, Oid, _, Val, _} <- Vb,  Col <- Cols, lists:prefix(TableId++[Col]++TmpRowIndex, Oid)],
+        Values;
+    {ok, {genErr, _, _}, _R}-> Values=[];
+	{error, _Reason} -> Values=[]
     end,
     get_next_row(Agent, TableId, Cols, [Oid || {Oid, _} <- Values], [[Value || {_, Value} <- Values]|Acc], TmpRowIndex).
 
