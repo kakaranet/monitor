@@ -66,6 +66,9 @@ function draw(el, jsonData){
     } else if(jsonData.dht2){
 	    ctx.fillStyle="#0c132d";
 	    blockName = "DH2";
+    } else if(jsonData.rabbit){
+	    ctx.fillStyle="#ffbf00";
+	    blockName = "RBT";
     }
 
     ctx.globalAlpha = 0.9;
@@ -151,6 +154,24 @@ function draw(el, jsonData){
             ctx.fillText(block.cpu_avg15, 184, 82);
             ctx.fillText(asciiToString(block.node_get_fsm_time_median), 184, 100);
             ctx.fillText(asciiToString(block.node_put_fsm_time_median), 184, 118);
+            ctx.textAlign="left";
+        });
+    }
+
+    if (jsonData.rabbit) {
+        $.each(jsonData.rabbit, function(i, block){
+            ctx.fillStyle="#FFFFFF";
+            ctx.font="bold 12px Ubuntu";
+            ctx.textAlign="left";
+            ctx.fillText("CPU:", 16, 28);
+            ctx.fillText("MEM:", 16, 46);
+            ctx.fillText("QUEUES:", 16, 64);
+            ctx.fillStyle="#FFFFFF";
+            ctx.textAlign="right";
+            ctx.font="15px Ubuntu";
+            ctx.fillText(block.cpu_avg15, 184, 28);
+            ctx.fillText(((jsonData.mem[0].used * 100 / jsonData.mem[0].total)|0) + " % of " + long_n(jsonData.mem[0].total) + " B", 184, 46);
+            ctx.fillText("not implemented", 184, 64);
             ctx.textAlign="left";
         });
     }

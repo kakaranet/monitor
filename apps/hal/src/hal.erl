@@ -15,7 +15,7 @@ home([{http_host, Host} | _Env]) ->
     "<script type=\"text/javascript\" src=\"http://"++ Host++"/jquery.js\"></script>"++
     "<script type=\"text/javascript\" src=\"http://"++ Host++"/hal.js\"></script>"++
     "<script type=\"text/javascript\" src=\"http://"++ Host++"/hist.js\"></script>"++
-    "<script>function comet(el){$.ajax({ type: 'Get', url: 'http://"++Host++"/monitor/hal:snmp?id=' + $(el).attr('id') + '&cursor=' + $(el).attr('class'),"++ 
+    "<script>function comet(el){$.ajax({ type: 'Get', url: 'http://"++Host++"/monitor/hal:snmp?id=' + $(el).attr('id') + '&cursor=' + $(el).attr('class'),"++
     "async: true, cache: false, dataType: \"json\","++
     "success : function(data){handleAgentData(el, data);}, error: function(XMLHttpRequest, textStatus, error){ handleError(el, textStatus);}});}" ++
     "$(function(){$.map($(\"canvas\"), function(el, i){comet(el)});});</script>"++
@@ -51,13 +51,15 @@ rotate_info(Cursor, Agent)->
     case Cursor of
 	"mem" ->
 	    {disks, disk_info(Agent)};
-	"disks" -> 
+	"disks" ->
 	    {dht, dht_info(Agent)};
-	"dht" -> 
+	"dht" ->
 	    {dht2, [dht2_info(Agent)]};
-	"dht2" -> 
-	    {mem, [mem_info(Agent)]};
-	_ -> 
+	"dht2" ->
+	    {rabbit, [rabbit_info(Agent)]};
+  "rabbit" ->
+    {mem, [mem_info(Agent)]};
+	_ ->
 	    {disks, disk_info(Agent)}
     end.
 
@@ -75,8 +77,13 @@ mem_info(Agent) ->
 dht2_info(Agent) ->
     {struct, lists:zip(?dht2RowMetrics, get_row(Agent, [?dht2Entry++[Col]++[?dhtIndex] || Col<-?dht2Row]) )}.
 
+rabbit_info(Agent) ->
+  CpuAvg = get_row(Agent, [?dht2Entry ++ [?cpuAvg15] ++ [?dhtIndex]]),
+  Mem = mem_info(Agent),
+  {struct, lists:zip([cpu, mem, queues], [CpuAvg, Mem, not_implemented])}.
+
 get_row(Agent, Oids)->
-    case snmpm:sync_get("kakauser", Agent, Oids) of 
+    case snmpm:sync_get("kakauser", Agent, Oids) of
         {ok, {_,_,Vb},_}->
 	    [Val || {varbind, _Oid, _, Val, _} <-Vb];
         {error, _Reason} -> []
